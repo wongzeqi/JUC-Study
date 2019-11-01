@@ -41,7 +41,7 @@ public class Demo4 {
 }
 
 
-class TestPrint4{
+class TestPrint2{
 
     public  static  int num = 0;
     Lock lock = new ReentrantLock();
@@ -90,37 +90,39 @@ class TestPrint3{
     final Condition condition0 = lock.newCondition();
     final Condition condition1 = lock.newCondition();
     public void print0() {
+        //if (num==0){
         lock.lock();
-        while (num == 0) {
-            try {
-                condition0.await();
-                num--;
-                System.out.println("线程" + Thread.currentThread().getName() + "打印" + num);
-                condition1.signal();
-            } catch (Exception e) {
-
-            } finally {
-                lock.unlock();
+        try {
+            while (num == 0) {
+                try {
+                    condition0.await();
+                } catch (Exception e) {
+                }
             }
-
+            num--;
+            System.out.println("线程" + Thread.currentThread().getName() + "打印" + num);
+            condition1.signal();
+        }finally {
+            lock.unlock();
         }
     }
 
     public  void print1(){
-
         lock.lock();
-        while (num == 1) {
-            try {
-                condition1.await();
-                num++;
-                System.out.println("线程" + Thread.currentThread().getName() + "打印" + num);
-                condition0.signal();
-            } catch (Exception e) {
+        try {
 
-            } finally {
-                lock.unlock();
+            while (num == 1) {
+                try {
+                    condition1.await();
+
+                } catch (Exception e) {
+                }
             }
-
+            num++;
+            System.out.println("线程" + Thread.currentThread().getName() + "打印" + num);
+            condition0.signal();
+        }finally {
+            lock.unlock();
         }
     }
 }
